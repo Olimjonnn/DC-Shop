@@ -86,6 +86,7 @@ CORS_ALLOW_HEADERS = (
     "dataserviceversion",
     'maxdataservicevension',
 )
+
 ROOT_URLCONF = 'Shop.urls'
 
 TEMPLATES = [
@@ -153,7 +154,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "static/"]
+# STATICFILES_DIRS = [BASE_DIR / "static/"]
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 

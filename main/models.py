@@ -1,5 +1,7 @@
+import email
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator,  MinValueValidator
 
 class User(AbstractUser):
     type = models.IntegerField(choices=(
@@ -8,6 +10,7 @@ class User(AbstractUser):
         (3, 'User'),
     ), default=3)
     phone = models.IntegerField(null=True, blank=True)
+    email = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.username
@@ -17,16 +20,14 @@ class User(AbstractUser):
         verbose_name = 'User'
         verbose_name_plural = 'Users'
 
-
 class Info(models.Model):
     logo = models.ImageField(upload_to='Info/')
-    in_link = models.CharField(max_length=500)
-    tw_link = models.CharField(max_length=500)
-    fa_link = models.CharField(max_length=500)
-    insta_link = models.CharField(max_length=500)
-    text = models.CharField(max_length=255, blank=True, null=True)
+    in_link = models.URLField()
+    tw_link = models.URLField()
+    fa_link = models.URLField()
+    insta_link = models.URLField()
 
-class Email(models.Model):
+class Newsletter(models.Model):
     email = models.EmailField()
 
 class Category(models.Model):
@@ -35,26 +36,67 @@ class Category(models.Model):
         return self.name
 
 class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     image1 = models.ImageField(upload_to="Product/")
     image2 = models.ImageField(upload_to="Product/")
-    image3 = models.ImageField(upload_to="Product/")
-    image4 = models.ImageField(upload_to="Product/")
-    image5 = models.ImageField(upload_to="Product/")
-    price = models.IntegerField()
-    reyting = models.IntegerField(choices=(
-        (1, "1"),
-        (2, "2"),
-        (3, "3"),
-        (4, "4"),
-        (5, "5")
-    ), default=0)
-    review = models.IntegerField()
+    image3 = models.ImageField(upload_to="Product/", blank=True, null=True)
+    image4 = models.ImageField(upload_to="Product/", blank=True, null=True)
+    image5 = models.ImageField(upload_to="Product/", blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    date =  models.DateField(auto_now_add=True)
+    text = models.TextField()
+    discount = models.IntegerField(
+        validators=[
+            MaxValueValidator(100),
+            MinValueValidator(0)
+        ], default=0
+    )
+    rating = models.FloatField(blank=True, null=True)
+    reviews = models.IntegerField(blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     SKU = models.IntegerField(blank=True, null=True)
+    description = models.TextField()
+    weight = models.FloatField()
+    dimentions = models.CharField(max_length=100)
+    colours = models.CharField(max_length=100)
+    material = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
+class Review(models.Model):
+    rating = models.FloatField(default=0,
+        validators=[
+            MaxValueValidator(5),
+            MinValueValidator(0)
+        ]
+    )
+    text = models.TextField()
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.CharField(max_length=500)
+    date =  models.DateField(auto_now_add=True)
 
-# class Slider(models.Model):
+class ContactUs(models.Model):
+    first_name = models.CharField(max_length=199)
+    last_name = models.CharField(max_length=199)
+    email = models.EmailField()
+    subject = models.CharField(max_length=100)
+    message = models.TextField()
+
+
+class Wishlist(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.product.title
+
+class Card(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.product.title
