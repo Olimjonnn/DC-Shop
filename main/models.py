@@ -100,3 +100,38 @@ class Card(models.Model):
 
     def __str__(self):
         return self.product.title
+
+class Blog(models.Model):
+    img = models.ImageField(upload_to='blog/')
+    title = models.CharField(max_length=255)
+    mintext = models.CharField(max_length=255)
+    text = models.TextField(null=True, blank=True)
+    date = models.DateField(auto_now_add=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    blogtext = models.ManyToManyField('Blogtext', blank=True, null=True)
+
+class Reply(models.Model):
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    website = models.CharField(max_length=255)
+    comment = models.TextField()
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+
+
+class Blogtext(models.Model):
+    text = models.CharField(max_length=100)
+
+    
+
+class About(models.Model):
+    img = models.ImageField(upload_to='About/')
+    title = models.CharField(max_length=255)
+    mintext = models.CharField(max_length=255)
+    text = models.TextField(null=True, blank=True)
+    date = models.DateField(auto_now_add=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    blogtext = models.ManyToManyField('Abouttext', blank=True, null=True)
+
+
+class Abouttext(models.Model):
+    text = models.CharField(max_length=100)
