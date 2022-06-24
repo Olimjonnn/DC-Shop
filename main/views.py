@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from .serializer import *
 from rest_framework import viewsets
-
+from . import models
 # HOME
 
 class Slider(ListAPIView):
@@ -93,3 +93,6 @@ class ReviewVw(APIView):
 
 # LOGIN
 
+# models.Product.objects.filter(is_active=False).order_by('-id')[:6]
+
+User
